@@ -55,7 +55,7 @@ public class SecurityConfig {
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/register", "/login", "/welcome").permitAll()
+                        .requestMatchers("/", "/index.html", "/static/**", "/public/**", "/api/auth/**", "/register", "/login", "/welcome").permitAll()
                         .anyRequest().authenticated())
 
                 // Stateless session (for APIs)

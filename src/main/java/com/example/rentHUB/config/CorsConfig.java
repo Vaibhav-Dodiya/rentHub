@@ -49,7 +49,7 @@ public class CorsConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5353",
                 "http://127.0.0.1:5500",
-                "http://localhost:3000"  // optional for React or dev tools
+                "http://localhost:3000"  
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
