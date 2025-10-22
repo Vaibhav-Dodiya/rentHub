@@ -16,30 +16,6 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    //    private final CustomUserDetails customUserDetails;
-//
-//    public SecurityConfig(CustomUserDetails customUserDetails) {
-//        this.customUserDetails = customUserDetails;
-//    }
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(request -> request.requestMatchers("/api/auth/**", "/api/user/register", "/login", "/welcome").permitAll()
-//
-//                        .anyRequest().authenticated())
-//                .formLogin(form -> form.disable())
-//                .logout(logout -> logout.disable())
-//                .httpBasic(basic -> basic.disable());
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -49,13 +25,16 @@ public class SecurityConfig {
                 // Enable CORS (for frontend connections)
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
-                    corsConfig.setAllowedOrigins(List.of("*"));
+                    corsConfig.setAllowedOrigins(List.of("https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",
+                            "http://localhost:3000",               // ✅ local dev frontend
+                            "http://localhost:8080"  ));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true);
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/","/health", "/index.html", "/static/**", "/public/**", "/api/auth/**", "/register", "/login", "/welcome").permitAll()
+                        .requestMatchers("/","/health", "/index.html", "/static/**", "/public/**","/auth/**","/api/users/**", "/api/auth/**", "/register", "/login", "/welcome").permitAll()
                         .anyRequest().authenticated())
 
                 // Stateless session (for APIs)
