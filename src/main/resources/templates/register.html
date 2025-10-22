@@ -1,15 +1,51 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Register</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Register</h1>-->
+<!--    <form action="/register" method="post">-->
+<!--        Username: <input type="text" name="username" required/> <br/>-->
+<!--        Email: <input type="email" name="email" required/> <br/>-->
+<!--        Password: <input type="password" name="password" required/> <br/>-->
+<!--        <button type="submit">Register</button>-->
+<!--    </form>-->
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Register</title>
 </head>
 <body>
-    <h1>Register</h1>
-    <form action="/register" method="post">
-        Username: <input type="text" name="username" required/> <br/>
-        Email: <input type="email" name="email" required/> <br/>
-        Password: <input type="password" name="password" required/> <br/>
-        <button type="submit">Register</button>
-    </form>
+<h1>Register</h1>
+<form id="registerForm">
+    Username: <input type="text" id="username" required /><br>
+    Email: <input type="email" id="email" required /><br>
+    Password: <input type="password" id="password" required /><br>
+    <button type="submit">Register</button>
+</form>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        username: document.getElementById("username").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+      };
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    });
+</script>
 </body>
 </html>

@@ -1,69 +1,17 @@
-//package com.example.rentHUB.controller;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Controller;
-//import org.springframework.web.bind.annotation.*;
-//import com.example.rentHUB.service.UserService;
-//
-//@RestController
-//@RequestMapping("/api/auth")
-//public class AuthController {
-//
-//    @Autowired
-//    private UserService userService;
-//
-//    @GetMapping("/register")
-//    public String register(){
-//        return "register";
-//    }
-//    @PostMapping("/register")
-//    @ResponseBody
-//    public Response registerUser(@RequestParam String username,
-//                               @RequestParam String email,
-//                               @RequestParam String password){
-//
-//        try {
-//            userService.registerUser(username, email, password);
-//            return new Response("success", "User registered successfully");
-//        } catch (Exception e) {
-//            return new Response("error", e.getMessage());
-//        }
-//    }
-//    @GetMapping("/login")
-//    public String login(){
-//        return "login";
-//    }
-//    @GetMapping("/welcome")
-//    public String welcome(){
-//    return "welcome";
-//    }
-//    static class Response {
-//        private String status;
-//        private String message;
-//
-//        public Response(String status, String message) {
-//            this.status = status;
-//            this.message = message;
-//        }
-//
-//        public String getStatus() { return status; }
-//        public String getMessage() { return message; }
-//    }
-//}
 package com.example.rentHUB.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.example.rentHUB.service.UserService;
 
-@RestController  // automatically adds @ResponseBody to all methods
-@RequestMapping("/api/auth")
+@Controller
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
     private UserService userService;
 
-    // POST /api/auth/register - accepts JSON body
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterRequest request){
         try {
@@ -73,15 +21,44 @@ public class AuthController {
             return new Response("error", e.getMessage());
         }
     }
-
-    // POST /api/auth/login placeholder
     @PostMapping("/login")
-    public Response loginUser(@RequestBody LoginRequest request){
-        // Implement login logic
-        return new Response("success", "Login successful");
+    public Response loginUser(@RequestBody LoginRequest request) {
+        boolean success = userService.loginUser(request.getEmail(), request.getPassword());
+        if (success) {
+            return new Response("success", "Login successful");
+        } else {
+            return new Response("error", "Invalid email or password");
+        }
     }
-
-    // DTO for registration JSON
+//    @PostMapping("/forgot-password")
+//    public Response forgotPassword(@RequestBody ForgotPasswordRequest request) {
+//        try {
+//            boolean otpSent = userService.sendOtpToEmail(request.getEmail());
+//            if (otpSent) {
+//                return new Response("success", "OTP sent to your registered email");
+//            } else {
+//                return new Response("error", "Email not registered");
+//            }
+//        } catch (Exception e) {
+//            return new Response("error", "Something went wrong: " + e.getMessage());
+//        }
+//    }
+//
+//    // ✅ Step 2: Verify OTP & Reset Password
+//    @PostMapping("/reset-password")
+//    public Response resetPassword(@RequestBody ResetPasswordRequest request) {
+//        try {
+//            boolean reset = userService.verifyOtpAndResetPassword(
+//                    request.getEmail(), request.getOtp(), request.getNewPassword());
+//            if (reset) {
+//                return new Response("success", "Password reset successfully");
+//            } else {
+//                return new Response("error", "Invalid OTP or expired");
+//            }
+//        } catch (Exception e) {
+//            return new Response("error", "Something went wrong: " + e.getMessage());
+//        }
+//    }
     static class RegisterRequest {
         private String username;
         private String email;
@@ -108,7 +85,22 @@ public class AuthController {
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
     }
-
+    static class ForgotPasswordRequest {
+        private String email;
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+    }
+    static class ResetPasswordRequest {
+        private String email;
+        private String otp;
+        private String newPassword;
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getOtp() { return otp; }
+        public void setOtp(String otp) { this.otp = otp; }
+        public String getNewPassword() { return newPassword; }
+        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    }
     // Response DTO
     static class Response {
         private String status;

@@ -1,15 +1,232 @@
+<!--&lt;!&ndash;<!DOCTYPE html>&ndash;&gt;-->
+<!--&lt;!&ndash;<html xmlns:th="http://www.thymeleaf.org">&ndash;&gt;-->
+<!--&lt;!&ndash;<head>&ndash;&gt;-->
+<!--&lt;!&ndash;    <title>Login</title>&ndash;&gt;-->
+<!--&lt;!&ndash;</head>&ndash;&gt;-->
+<!--&lt;!&ndash;<body>&ndash;&gt;-->
+<!--&lt;!&ndash;<h1>Login</h1>&ndash;&gt;-->
+<!--&lt;!&ndash;<form action="/login" method="post">&ndash;&gt;-->
+<!--&lt;!&ndash;    Username: <input type="text" name="username" /><br/>&ndash;&gt;-->
+<!--&lt;!&ndash;    Password: <input type="password" name="password" /><br/>&ndash;&gt;-->
+<!--&lt;!&ndash;    Email: <input type="email" name="email" /><br/>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button type="submit">Login</button>&ndash;&gt;-->
+<!--&lt;!&ndash;</form>&ndash;&gt;-->
+<!--&lt;!&ndash;</body>&ndash;&gt;-->
+<!--&lt;!&ndash;</html>&ndash;&gt;-->
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Login</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Login</h1>-->
+
+<!--<form id="loginForm">-->
+<!--    Email: <input type="email" id="email" name="email" required /><br/>-->
+<!--    Password: <input type="password" id="password" name="password" required /><br/>-->
+<!--    <button type="submit">Login</button>-->
+<!--&lt;!&ndash;    <a href="forgotPass.html">Forgot Password</a>&ndash;&gt;-->
+<!--</form>-->
+
+<!--<p id="responseMessage"></p>-->
+
+<!--<script>-->
+<!--    const form = document.getElementById('loginForm');-->
+<!--    form.addEventListener('submit', async (event) => {-->
+<!--        event.preventDefault(); // Prevent default form submission-->
+
+<!--        const email = document.getElementById('email').value;-->
+<!--        const password = document.getElementById('password').value;-->
+
+<!--        const response = await fetch('/api/auth/login', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify({ email, password })-->
+<!--        });-->
+
+<!--        const data = await response.json();-->
+<!--        const messageEl = document.getElementById('responseMessage');-->
+
+<!--        if (data.status === 'success') {-->
+<!--            messageEl.style.color = 'green';-->
+<!--            messageEl.textContent = data.message;-->
+<!--            // Redirect to dashboard or home page if needed-->
+<!--            // window.location.href = '/dashboard';-->
+<!--        } else {-->
+<!--            messageEl.style.color = 'red';-->
+<!--            messageEl.textContent = data.message;-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<!--<a href="#" id="forgotLink">Forgot Password?</a>-->
+
+<!--<div id="forgotForm" style="display:none;">-->
+<!--    <h2>Reset Password</h2>-->
+<!--    Email: <input type="email" id="resetEmail" /><br/>-->
+<!--    <button id="resetBtn">Reset Password</button>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    document.getElementById('forgotLink').addEventListener('click', (e) => {-->
+<!--        e.preventDefault();-->
+<!--        document.getElementById('loginForm').style.display = 'none';-->
+<!--        document.getElementById('forgotForm').style.display = 'block';-->
+<!--    });-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <title>Login / Forgot Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        input {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        button {
+            margin: 5px 0;
+            padding: 5px 10px;
+        }
+        #responseMessage {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .form-section {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+
 <h1>Login</h1>
-<form action="/login" method="post">
-    Username: <input type="text" name="username" /><br/>
-    Password: <input type="password" name="password" /><br/>
-    Email: <input type="email" name="email" /><br/>
+
+<!-- ===== LOGIN FORM ===== -->
+<form id="loginForm" class="form-section" style="display:block;">
+    Email: <input type="email" id="email" required /><br/>
+    Password: <input type="password" id="password" required /><br/>
     <button type="submit">Login</button>
+    <br/>
+    <a href="#" id="forgotLink">Forgot Password?</a>
 </form>
+
+<!-- ===== FORGOT PASSWORD (SEND OTP) ===== -->
+<form id="forgotForm" class="form-section">
+    <h2>Forgot Password</h2>
+    Enter your registered email:<br/>
+    <input type="email" id="forgotEmail" required /><br/>
+    <button type="button" id="sendOtpBtn">Send OTP</button>
+    <br/>
+    <a href="#" id="backToLogin1">Back to Login</a>
+</form>
+
+<!-- ===== RESET PASSWORD (VERIFY OTP) ===== -->
+<form id="resetForm" class="form-section">
+    <h2>Reset Password</h2>
+    Email: <input type="email" id="resetEmail" readonly /><br/>
+    OTP: <input type="text" id="otp" required /><br/>
+    New Password: <input type="password" id="newPassword" required /><br/>
+    <button type="button" id="resetBtn">Reset Password</button>
+    <br/>
+    <a href="#" id="backToLogin2">Back to Login</a>
+</form>
+
+<p id="responseMessage"></p>
+
+<script>
+    const loginForm = document.getElementById('loginForm');
+    const forgotForm = document.getElementById('forgotForm');
+    const resetForm = document.getElementById('resetForm');
+    const msg = document.getElementById('responseMessage');
+
+    function showForm(formId) {
+        [loginForm, forgotForm, resetForm].forEach(f => f.style.display = 'none');
+        formId.style.display = 'block';
+        msg.textContent = '';
+    }
+
+    // ==================== LOGIN ====================
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        msg.style.color = data.status === 'success' ? 'green' : 'red';
+        msg.textContent = data.message;
+    });
+
+    // ==================== FORGOT PASSWORD ====================
+    document.getElementById('forgotLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm(forgotForm);
+    });
+
+    document.getElementById('backToLogin1').addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm(loginForm);
+    });
+
+    document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+        const email = document.getElementById('forgotEmail').value;
+        if (!email) {
+            msg.style.color = 'red';
+            msg.textContent = 'Please enter email';
+            return;
+        }
+
+        const res = await fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        msg.style.color = data.status === 'success' ? 'green' : 'red';
+        msg.textContent = data.message;
+
+        if (data.status === 'success') {
+            document.getElementById('resetEmail').value = email; // prefill reset email
+            showForm(resetForm);
+        }
+    });
+
+    // ==================== RESET PASSWORD ====================
+    document.getElementById('backToLogin2').addEventListener('click', (e) => {
+        e.preventDefault();
+        showForm(loginForm);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', async () => {
+        const email = document.getElementById('resetEmail').value;
+        const otp = document.getElementById('otp').value;
+        const newPassword = document.getElementById('newPassword').value;
+
+        const res = await fetch('/api/auth/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp, newPassword })
+        });
+        const data = await res.json();
+        msg.style.color = data.status === 'success' ? 'green' : 'red';
+        msg.textContent = data.message;
+
+        if (data.status === 'success') {
+            showForm(loginForm);
+        }
+    });
+</script>
+
 </body>
 </html>
