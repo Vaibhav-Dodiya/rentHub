@@ -1,6 +1,8 @@
 package com.example.rentHUB.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.example.rentHUB.service.UserService;
@@ -22,15 +24,17 @@ public class AuthController {
         }
     }
     @PostMapping("/login")
-    public Response loginUser(@RequestBody LoginRequest request) {
+    public ResponseEntity<Response> loginUser(@RequestBody LoginRequest request) {
         boolean success = userService.loginUser(request.getEmail(), request.getPassword());
         if (success) {
-            return new Response("success", "Login successful");
+            return ResponseEntity.ok(new Response("success", "Login successful"));
         } else {
-            return new Response("error", "Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new Response("error", "Invalid email or password"));
         }
     }
-//    @PostMapping("/forgot-password")
+
+    //    @PostMapping("/forgot-password")
 //    public Response forgotPassword(@RequestBody ForgotPasswordRequest request) {
 //        try {
 //            boolean otpSent = userService.sendOtpToEmail(request.getEmail());
