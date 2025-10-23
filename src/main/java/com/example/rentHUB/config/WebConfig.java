@@ -42,7 +42,7 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://http://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",  // your Flutter web app
+                                "http://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",  // your Flutter web app
                                 "http://localhost:8080",
                                 "http://localhost:3000"
                         )
