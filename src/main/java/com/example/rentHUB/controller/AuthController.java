@@ -7,8 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.example.rentHUB.service.UserService;
 
-@Controller
+@RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = {
+        "https://rental-hub-lake.vercel.app",
+        "http://localhost:8080",
+        "http://localhost:3000"
+})
 public class AuthController {
 
     @Autowired
