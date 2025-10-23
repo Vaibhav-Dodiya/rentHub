@@ -46,15 +46,15 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // 👇 Use the exact URL where your Flutter frontend runs
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5353",
-                "http://127.0.0.1:5500",
-                "http://localhost:3000"  
+        configuration.setAllowedOrigins(Arrays.asList("*"
+//                "http://localhost:5353",
+//                "http://127.0.0.1:5500",
+//                "http://localhost:3000"
         ));
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
