@@ -27,7 +27,9 @@ public class SecurityConfig {
                     var corsConfig = new CorsConfiguration();
                     corsConfig.setAllowedOrigins(List.of("https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",
                             "http://localhost:3000",               // ✅ local dev frontend
-                            "http://localhost:8080"  ));
+                            "http://localhost:8080",
+                            "http://localhost:58364"
+                    ));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
                     corsConfig.setAllowCredentials(true);
