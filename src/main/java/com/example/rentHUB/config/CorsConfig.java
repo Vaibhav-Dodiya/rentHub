@@ -111,8 +111,9 @@ public class CorsConfig {
 
         // Allow frontend URLs
         config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:58364", // Flutter web (local)
-                "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" // Flutter deployed app
+                        "*"
+               // "http://localhost:58364", // Flutter web (local)
+              //  "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" // Flutter deployed app
         ));
 
         // Allow all common headers & methods
