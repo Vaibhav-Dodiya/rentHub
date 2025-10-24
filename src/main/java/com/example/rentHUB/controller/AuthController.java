@@ -10,7 +10,7 @@ import com.example.rentHUB.service.UserService;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = {
-        "https://rental-hub-lake.vercel.app",
+        "http://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",
         "http://localhost:8080",
         "http://localhost:3000"
 })

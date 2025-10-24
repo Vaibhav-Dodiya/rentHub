@@ -42,11 +42,12 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "http://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",  // your Flutter web app
-                                "http://localhost:8080",
-                                "http://localhost:3000"
+                                "*"
+//                                "http://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",  // your Flutter web app
+//                                "http://localhost:8080",
+//                                "http://localhost:3000"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS","*")
                         .allowedHeaders("*")
                         .allowCredentials(false);
             }
