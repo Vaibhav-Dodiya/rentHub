@@ -61,13 +61,43 @@
 //        return source;
 //    }
 //}
+//package com.example.rentHUB.config;
+//
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.web.cors.CorsConfiguration;
+//import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+//import org.springframework.web.cors.CorsConfigurationSource;
+//import org.springframework.web.filter.CorsFilter;
+//
+//import java.util.Arrays;
+//
+//@Configuration
+//public class CorsConfig {
+//
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.setAllowedOrigins(Arrays.asList(
+//                "http://localhost:58364", // your Flutter Web origin
+//                "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" // deployed Flutter app
+//        ));
+//        config.setAllowedHeaders(Arrays.asList("*"));
+//        config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
+//}
+//
 package com.example.rentHUB.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
@@ -78,17 +108,23 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+
+        // Allow frontend URLs
         config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:58364", // your Flutter Web origin
-                "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" // deployed Flutter app
+                "http://localhost:58364", // Flutter web (local)
+                "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" // Flutter deployed app
         ));
+
+        // Allow all common headers & methods
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Allow cookies/authorization if used
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return new CorsFilter(source);
     }
 }
-
