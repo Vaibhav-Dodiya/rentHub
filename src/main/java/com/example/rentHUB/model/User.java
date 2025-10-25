@@ -1,6 +1,6 @@
 package com.example.rentHUB.model;
+
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.*;
 
 @Entity
@@ -24,6 +24,7 @@ public class User {
     @Email
     @Column(unique = true, nullable = false)
     private String email;
+
     public Long getId() {
         return id;
     }

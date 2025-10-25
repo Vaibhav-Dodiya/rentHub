@@ -81,24 +81,22 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of(
-                            "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",
-                            "http://localhost:58364",
-                            "http://localhost:3000",
-                            "http://localhost:8080"
-                    ));
+                    // Allow all origins during development and for web clients.
+                    // Use allowedOriginPatterns to permit wildcard patterns (recommended over "*").
+                    config.setAllowedOriginPatterns(List.of("*"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
+                    // If you don't need cookies/auth credentials from the browser, consider setting
+                    // this to false.
                     config.setAllowCredentials(true);
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/auth/**", "/register", "/login",
-                                "/public/**", "/static/**", "/health"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
+                                "/public/**", "/static/**", "/health")
+                        .permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
