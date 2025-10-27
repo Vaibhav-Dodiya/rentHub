@@ -44,7 +44,8 @@ public class SecurityConfig {
                         // Wildcard pattern allows Spring to echo back the Origin when credentials are
                         // enabled
                         //config.setAllowedOriginPatterns(List.of("*"));
-                        config.setAllowedOriginPatterns(List.of("http://localhost:58364", "https://rental-hub-lake.vercel.app")); // dev + prod
+                        config.setAllowedOriginPatterns(List.of("http://localhost:58364",
+                                "https://rental-hub-lake.vercel.app")); // dev + prod
 
                     }
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
@@ -57,7 +58,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/", "/auth/**", "/register", "/login",
-                                "/public/**", "/static/**", "/health","/api/users/**","/auth/**")
+                                "/public/**", "/static/**", "/health",
+                                "/api/users/**","/auth/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 //.csrf(AbstractHttpConfigurer::disable)
