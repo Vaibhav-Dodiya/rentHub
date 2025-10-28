@@ -34,35 +34,8 @@ public class AuthController {
         }
     }
 
-    // @PostMapping("/forgot-password")
-    // public Response forgotPassword(@RequestBody ForgotPasswordRequest request) {
-    // try {
-    // boolean otpSent = userService.sendOtpToEmail(request.getEmail());
-    // if (otpSent) {
-    // return new Response("success", "OTP sent to your registered email");
-    // } else {
-    // return new Response("error", "Email not registered");
-    // }
-    // } catch (Exception e) {
-    // return new Response("error", "Something went wrong: " + e.getMessage());
-    // }
-    // }
     //
-    // // ✅ Step 2: Verify OTP & Reset Password
-    // @PostMapping("/reset-password")
-    // public Response resetPassword(@RequestBody ResetPasswordRequest request) {
-    // try {
-    // boolean reset = userService.verifyOtpAndResetPassword(
-    // request.getEmail(), request.getOtp(), request.getNewPassword());
-    // if (reset) {
-    // return new Response("success", "Password reset successfully");
-    // } else {
-    // return new Response("error", "Invalid OTP or expired");
-    // }
-    // } catch (Exception e) {
-    // return new Response("error", "Something went wrong: " + e.getMessage());
-    // }
-    // }
+
     static class RegisterRequest {
         private String username;
         private String email;
@@ -93,7 +66,6 @@ public class AuthController {
         }
     }
 
-    // DTO for login JSON
     static class LoginRequest {
         private String email;
         private String password;
@@ -157,7 +129,6 @@ public class AuthController {
         }
     }
 
-    // Response DTO
     static class Response {
         private String status;
         private String message;

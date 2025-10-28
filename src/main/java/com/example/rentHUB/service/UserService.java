@@ -10,12 +10,8 @@ import com.example.rentHUB.repository.UserRepository;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    // private PasswordEncoder passwordEncoder;
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // public UserService(UserRepository userRepository){
-    // this.userRepository=userRepository;
-    // }
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void registerUser(String username, String email, String password) {
         if (userRepository.findByEmail(email) != null) {
@@ -33,8 +29,8 @@ public class UserService {
     public boolean loginUser(String email, String password) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            return false; // user not found
+            return false;
         }
-        return passwordEncoder.matches(password, user.getPassword()); // check password
+        return passwordEncoder.matches(password, user.getPassword());
     }
 }

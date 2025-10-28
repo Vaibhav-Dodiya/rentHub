@@ -11,7 +11,6 @@ import com.example.rentHUB.repository.UserRepository;
 public class CustomUserDetails implements UserDetailsService {
     private UserRepository userRepository;
 
-    // @Autowired
     public CustomUserDetails(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

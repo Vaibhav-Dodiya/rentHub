@@ -16,19 +16,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // Get all users
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Get user by email
     @GetMapping("/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userRepository.findByEmail(email);
     }
 
-    // Add user
     @PostMapping
     public User addUser(@RequestBody User user) {
         return userRepository.save(user);
