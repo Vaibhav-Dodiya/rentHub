@@ -7,5 +7,5 @@ public interface PropertyService {
     Property saveProperty(String title, double price, double oldPrice,
                           String deliveryInfo, MultipartFile image);
     List<Property> getAllProperties();
-    void deleteProperty(Long id);
+    void deleteProperty(String id);
 }

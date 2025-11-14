@@ -1,0 +1,557 @@
+[1mdiff --git a/Dockerfile b/Dockerfile[m
+[1mindex 2950d15..5bf11ea 100644[m
+[1m--- a/Dockerfile[m
+[1m+++ b/Dockerfile[m
+[36m@@ -13,13 +13,13 @@[m
+ ## Run the application[m
+ #ENTRYPOINT ["java", "-jar", "app.jar"][m
+ # Use Maven to build the project[m
+[31m-FROM maven:3.9.6-eclipse-temurin-17 AS build[m
+[32m+[m[32mFROM maven:3.9.6-eclipse-temurin-21 AS build[m
+ WORKDIR /app[m
+ COPY . .[m
+ RUN mvn clean package -DskipTests[m
+ [m
+ # Use a smaller runtime image for final app[m
+[31m-FROM openjdk:17-jdk-slim[m
+[32m+[m[32mFROM openjdk:21-jdk-slim[m
+ WORKDIR /app[m
+ COPY --from=build /app/target/*.jar app.jar[m
+ EXPOSE 8080[m
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex 24a102b..204aae9 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -27,7 +27,7 @@[m
+ 		<url/>[m
+ 	</scm>[m
+ 	<properties>[m
+[31m-		<java.version>17</java.version>[m
+[32m+[m		[32m<java.version>21</java.version>[m
+ 	</properties>[m
+ 	<dependencies>[m
+ 		<dependency>[m
+[36m@@ -42,6 +42,11 @@[m
+ 			<groupId>org.springframework.boot</groupId>[m
+ 			<artifactId>spring-boot-starter-thymeleaf</artifactId>[m
+ 		</dependency>[m
+[32m+[m		[32m<dependency>[m
+[32m+[m			[32m<groupId>org.springframework.boot</groupId>[m
+[32m+[m			[32m<artifactId>spring-boot-starter-data-mongodb</artifactId>[m
+[32m+[m		[32m</dependency>[m
+[32m+[m
+ 		<dependency>[m
+ 			<groupId>org.springframework.boot</groupId>[m
+ 			<artifactId>spring-boot-starter-web</artifactId>[m
+[36m@@ -66,11 +71,13 @@[m
+ 			<artifactId>spring-security-test</artifactId>[m
+ 			<scope>test</scope>[m
+ 		</dependency>[m
+[31m-        <dependency>[m
+[31m-            <groupId>javax</groupId>[m
+[31m-            <artifactId>javaee-api</artifactId>[m
+[31m-            <version>6.0</version>[m
+[31m-        </dependency>[m
+[32m+[m		[32m<!-- Replaced legacy Java EE API (javax) with Jakarta EE 10 API to match modern runtimes and Spring Boot 3+ -->[m
+[32m+[m		[32m<dependency>[m
+[32m+[m			[32m<groupId>jakarta.platform</groupId>[m
+[32m+[m			[32m<artifactId>jakarta.jakartaee-api</artifactId>[m
+[32m+[m			[32m<version>10.0.0</version>[m
+[32m+[m			[32m<scope>provided</scope>[m
+[32m+[m		[32m</dependency>[m
+ 		<dependency>[m
+ 			<groupId>org.springframework.boot</groupId>[m
+ 			<artifactId>spring-boot-starter-validation</artifactId>[m
+[36m@@ -89,6 +96,14 @@[m
+ [m
+ 	<build>[m
+ 		<plugins>[m
+[32m+[m			[32m<plugin>[m
+[32m+[m				[32m<groupId>org.apache.maven.plugins</groupId>[m
+[32m+[m				[32m<artifactId>maven-compiler-plugin</artifactId>[m
+[32m+[m				[32m<version>3.11.0</version>[m
+[32m+[m				[32m<configuration>[m
+[32m+[m					[32m<release>21</release>[m
+[32m+[m				[32m</configuration>[m
+[32m+[m			[32m</plugin>[m
+ 			<plugin>[m
+ 				<groupId>org.springframework.boot</groupId>[m
+ 				<artifactId>spring-boot-maven-plugin</artifactId>[m
+[1mdiff --git a/src/main/java/com/example/rentHUB/config/CorsConfig.java b/src/main/java/com/example/rentHUB/config/CorsConfig.java[m
+[1mindex 655944b..ba870a9 100644[m
+[1m--- a/src/main/java/com/example/rentHUB/config/CorsConfig.java[m
+[1m+++ b/src/main/java/com/example/rentHUB/config/CorsConfig.java[m
+[36m@@ -1,164 +1,184 @@[m
+[31m-////[m
+[32m+[m[32m////// package com.example.rentHUB.config;[m
+ //////[m
+[31m-////[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-////[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-////[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-////[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-////[m
+[32m+[m[32m////// public class CorsConfig {[m
+[32m+[m[32m////// }[m
+[32m+[m[32m//// package com.example.rentHUB.config;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import org.springframework.context.annotation.Bean;[m
+[32m+[m[32m//// import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfiguration;[m
+[32m+[m[32m//// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfigurationSource;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import java.util.Arrays;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Configuration[m
+[32m+[m[32m//// public class CorsConfig {[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Bean[m
+[32m+[m[32m//// public CorsConfigurationSource corsConfigurationSource() {[m
+[32m+[m[32m//// CorsConfiguration configuration = new CorsConfiguration();[m
+[32m+[m[32m//// configuration.setAllowedOrigins(Arrays.asList("*")); // replace "*" with[m
+[32m+[m[32m////// Flutter IP if needed[m
+[32m+[m[32m//// configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));[m
+[32m+[m[32m//// configuration.setAllowedHeaders(Arrays.asList("*"));[m
+[32m+[m[32m//// configuration.setAllowCredentials(true);[m
+[32m+[m[32m////[m
+[32m+[m[32m//// UrlBasedCorsConfigurationSource source = new[m
+[32m+[m[32m////// UrlBasedCorsConfigurationSource();[m
+[32m+[m[32m//// source.registerCorsConfiguration("/**", configuration); // apply to all[m
+[32m+[m[32m////// endpoints[m
+[32m+[m[32m//// return source;[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// package com.example.rentHUB.config;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import org.springframework.context.annotation.Bean;[m
+[32m+[m[32m//// import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfiguration;[m
+[32m+[m[32m//// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfigurationSource;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import java.util.Arrays;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Configuration[m
+[32m+[m[32m//// public class CorsConfig {[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Bean[m
+[32m+[m[32m//// public CorsConfigurationSource corsConfigurationSource() {[m
+[32m+[m[32m//// CorsConfiguration configuration = new CorsConfiguration();[m
+[32m+[m[32m////[m
+[32m+[m[32m//// // 👇 Use the exact URL where your Flutter frontend runs[m
+[32m+[m[32m//// configuration.setAllowedOrigins(Arrays.asList("*"[m
+[32m+[m[32m////// "http://localhost:5353",[m
+[32m+[m[32m////// "http://127.0.0.1:5500",[m
+[32m+[m[32m////// "http://localhost:3000"[m
+[32m+[m[32m//// ));[m
+[32m+[m[32m////[m
+[32m+[m[32m//// configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT",[m
+[32m+[m[32m////// "DELETE", "OPTIONS"));[m
+[32m+[m[32m//// configuration.setAllowedHeaders(Arrays.asList("*"));[m
+[32m+[m[32m//// configuration.setAllowCredentials(false);[m
+[32m+[m[32m////[m
+[32m+[m[32m//// UrlBasedCorsConfigurationSource source = new[m
+[32m+[m[32m////// UrlBasedCorsConfigurationSource();[m
+[32m+[m[32m//// source.registerCorsConfiguration("/**", configuration);[m
+[32m+[m[32m//// return source;[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// package com.example.rentHUB.config;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import org.springframework.context.annotation.Bean;[m
+[32m+[m[32m//// import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfiguration;[m
+[32m+[m[32m//// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfigurationSource;[m
+[32m+[m[32m//// import org.springframework.web.filter.CorsFilter;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import java.util.Arrays;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Configuration[m
+[32m+[m[32m//// public class CorsConfig {[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Bean[m
+[32m+[m[32m//// public CorsFilter corsFilter() {[m
+[32m+[m[32m//// CorsConfiguration config = new CorsConfiguration();[m
+[32m+[m[32m//// config.setAllowCredentials(true);[m
+[32m+[m[32m//// config.setAllowedOrigins(Arrays.asList([m
+[32m+[m[32m//// "http://localhost:58364", // your Flutter Web origin[m
+[32m+[m[32m//// "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" //[m
+[32m+[m[32m////// deployed Flutter app[m
+[32m+[m[32m//// ));[m
+[32m+[m[32m//// config.setAllowedHeaders(Arrays.asList("*"));[m
+[32m+[m[32m//// config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));[m
+[32m+[m[32m////[m
+[32m+[m[32m//// UrlBasedCorsConfigurationSource source = new[m
+[32m+[m[32m////// UrlBasedCorsConfigurationSource();[m
+[32m+[m[32m//// source.registerCorsConfiguration("/**", config);[m
+[32m+[m[32m//// return new CorsFilter(source);[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// }[m
+[32m+[m[32m////[m
+[32m+[m[32m//// package com.example.rentHUB.config;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import org.springframework.context.annotation.Bean;[m
+[32m+[m[32m//// import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32m//// import org.springframework.web.cors.CorsConfiguration;[m
+[32m+[m[32m//// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;[m
+[32m+[m[32m//// import org.springframework.web.filter.CorsFilter;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// import java.util.Arrays;[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Configuration[m
+[32m+[m[32m//// public class CorsConfig {[m
+[32m+[m[32m////[m
+[32m+[m[32m//// @Bean[m
+[32m+[m[32m//// public CorsFilter corsFilter() {[m
+[32m+[m[32m//// CorsConfiguration config = new CorsConfiguration();[m
+[32m+[m[32m////[m
+[32m+[m[32m//// // Allow frontend URLs[m
+[32m+[m[32m//// config.setAllowedOrigins(Arrays.asList([m
+[32m+[m[32m//// "*"[m
+[32m+[m[32m//// // "http://localhost:58364", // Flutter web (local)[m
+[32m+[m[32m//// // "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app" //[m
+[32m+[m[32m////// Flutter deployed app[m
+[32m+[m[32m//// ));[m
+[32m+[m[32m////[m
+[32m+[m[32m//// // Allow all common headers & methods[m
+[32m+[m[32m//// config.setAllowedHeaders(Arrays.asList("*"));[m
+[32m+[m[32m//// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE",[m
+[32m+[m[32m////// "OPTIONS"));[m
+[32m+[m[32m////[m
+[32m+[m[32m//// // Allow cookies/authorization if used[m
+[32m+[m[32m//// config.setAllowCredentials(true);[m
+[32m+[m[32m////[m
+[32m+[m[32m//// UrlBasedCorsConfigurationSource source = new[m
+[32m+[m[32m////// UrlBasedCorsConfigurationSource();[m
+[32m+[m[32m//// source.registerCorsConfiguration("/**", config);[m
+[32m+[m[32m////[m
+[32m+[m[32m//// return new CorsFilter(source);[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//// }[m
+[32m+[m[32m//[m
+[32m+[m[32m// package com.example.rentHUB.config;[m
+[32m+[m[32m//[m
+[32m+[m[32m// import org.springframework.context.annotation.Configuration;[m
+[32m+[m[32m// import org.springframework.web.servlet.config.annotation.CorsRegistry;[m
+[32m+[m[32m// import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;[m
+[32m+[m[32m//[m
+[32m+[m[32m// import java.util.Arrays;[m
+[32m+[m[32m// import java.util.List;[m
+[32m+[m[32m//[m
+[32m+[m[32m// @Configuration[m
+[32m+[m[32m// public class CorsConfig implements WebMvcConfigurer {[m
+[32m+[m[32m//[m
+[32m+[m[32m// @Override[m
+[32m+[m[32m// public void addCorsMappings(CorsRegistry registry) {[m
+[32m+[m[32m// // Define all allowed origins for your frontend[m
+[32m+[m[32m// // If you are not using session cookies, set allowCredentials(false) for[m
+[32m+[m[32m////// safety.[m
+[32m+[m[32m// List<String> allowedOrigins = Arrays.asList([m
+[32m+[m[32m// // Production deployment (Vercel, etc.)[m
+[32m+[m[32m// "https://rental-ar6cxohqg-yuvraj-singh-parmars-projects.vercel.app",[m
+[32m+[m[32m//[m
+[32m+[m[32m// // Flutter Web default local port[m
+[32m+[m[32m// "http://localhost:58364",[m
+[32m+[m[32m//[m
+[32m+[m[32m// // Other common local development ports (React/Angular/Vue/mobile emulators)[m
+[32m+[m[32m// "http://localhost:3000",[m
+[32m+[m[32m// "http://localhost:8080",[m
+[32m+[m[32m// "http://127.0.0.1:8080",[m
+[32m+[m[32m//[m
+[32m+[m[32m// // If testing on a mobile emulator, you might need its local IP address or[m
+[32m+[m[32m////// '10.0.2.2' (Android emulator loopback)[m
+[32m+[m[32m// "http://10.0.2.2:8080"[m
+[32m+[m[32m// );[m
+[32m+[m[32m//[m
+[32m+[m[32m// registry.addMapping("/**") // Apply CORS configuration to all paths[m
+[32m+[m[32m// .allowedOrigins(allowedOrigins.toArray(new String[0]))[m
+[32m+[m[32m// .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")[m
+[32m+[m[32m// .allowedHeaders("*") // Allow all headers[m
+[32m+[m[32m// .allowCredentials(false); // Set to false unless you are explicitly relying[m
+[32m+[m[32m////// on session cookies for authentication.[m
+[32m+[m[32m// }[m
+[32m+[m[32m// }[m
+[1mdiff --git a/src/main/java/com/example/rentHUB/config/SecurityConfig.java b/src/main/java/com/example/rentHUB/config/SecurityConfig.java[m
+[1mindex 0255a04..509e8fe 100644[m
+[1m--- a/src/main/java/com/example/rentHUB/config/SecurityConfig.java[m
+[1m+++ b/src/main/java/com/example/rentHUB/config/SecurityConfig.java[m
+[36m@@ -1,37 +1,3 @@[m
+[31m-//package com.example.rentHUB.config;[m
+[31m-//[m
+[31m-//import org.springframework.context.annotation.Bean;[m
+[31m-//import org.springframework.context.annotation.Configuration;[m
+[31m-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;[m
+[31m-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;[m
+[31m-//import org.springframework.security.config.http.SessionCreationPolicy;[m
+[31m-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;[m
+[31m-//import org.springframework.security.crypto.password.PasswordEncoder;[m
+[31m-//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;[m
+[31m-//import org.springframework.security.web.SecurityFilterChain;[m
+[31m-//import com.example.rentHUB.service.CustomUserDetails;[m
+[31m-//import org.springframework.web.cors.CorsConfiguration;[m
+[31m-//[m
+[31m-//import java.util.List;[m
+[31m-//@Configuration[m
+[31m-//@EnableWebSecurity[m
+[31m-//public class SecurityConfig {[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m
+[31m-//}[m
+[31m-[m
+ package com.example.rentHUB.config;[m
+ [m
+ import org.springframework.beans.factory.annotation.Value;[m
+[36m@@ -54,6 +20,10 @@[m [mimport java.util.List;[m
+ @EnableWebSecurity[m
+ public class SecurityConfig {[m
+ [m
+[32m+[m[32m    // Comma-separated list of allowed origins for production.[m
+[32m+[m[32m    // Example (Render env var):[m
+[32m+[m[32m    // https://your-frontend.vercel.app,https://your-domain.com[m
+[32m+[m[32m    // Default "*" allows any origin (useful for local dev and quick checks).[m
+     @Value("${app.cors.allowed-origins:*}")[m
+     private String allowedOrigins;[m
+ [m
+[36m@@ -63,7 +33,7 @@[m [mpublic class SecurityConfig {[m
+                 .csrf(AbstractHttpConfigurer::disable)[m
+                 .cors(cors -> cors.configurationSource(request -> {[m
+                     var config = new CorsConfiguration();[m
+[31m-[m
+[32m+[m[32m                    // Support both explicit origin list and wildcard patterns via env var[m
+                     if (allowedOrigins != null && !allowedOrigins.isBlank() && !"*".equals(allowedOrigins.trim())) {[m
+                         List<String> origins = Arrays.stream(allowedOrigins.split(","))[m
+                                 .map(String::trim)[m
+[36m@@ -71,8 +41,12 @@[m [mpublic class SecurityConfig {[m
+                                 .toList();[m
+                         config.setAllowedOrigins(origins);[m
+                     } else {[m
+[32m+[m[32m                        // Wildcard pattern allows Spring to echo back the Origin when credentials are[m
+[32m+[m[32m                        // enabled[m
+[32m+[m[32m                        //config.setAllowedOriginPatterns(List.of("*"));[m
+[32m+[m[32m                        config.setAllowedOriginPatterns(List.of("http://localhost:58364",[m
+[32m+[m[32m                                "https://rental-hub-lake.vercel.app")); // dev + prod[m
+ [m
+[31m-                        config.setAllowedOriginPatterns(List.of("*"));[m
+                     }[m
+                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));[m
+                     config.setAllowedHeaders(List.of("*"));[m
+[36m@@ -84,9 +58,11 @@[m [mpublic class SecurityConfig {[m
+                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()[m
+                         .requestMatchers([m
+                                 "/", "/auth/**", "/register", "/login",[m
+[31m-                                "/public/**", "/static/**", "/health")[m
+[32m+[m[32m                                "/public/**", "/static/**", "/health",[m
+[32m+[m[32m                                "/api/users/**","/auth/**")[m
+                         .permitAll()[m
+                         .anyRequest().authenticated())[m
+[32m+[m[32m                //.csrf(AbstractHttpConfigurer::disable)[m
+                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))[m
+                 .formLogin(AbstractHttpConfigurer::disable)[m
+                 .logout(AbstractHttpConfigurer::disable)[m
+[1mdiff --git a/src/main/java/com/example/rentHUB/config/WebConfig.java b/src/main/java/com/example/rentHUB/config/WebConfig.java[m
+[1mindex 6938c41..ce32b57 100644[m
+[1m--- a/src/main/java/com/example/rentHUB/config/WebConfig.java[m
+[1m+++ b/src/main/java/com/example/rentHUB/config/WebConfig.java[m
+[36m@@ -1,39 +1,58 @@[m
+[31m-////[m
+[32m+[m[32m////// package com.example.rentHUB.config;[m
+ //////[m
+[31m-////[m
+[31m-////[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-////[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-//[m
+[31m-[m
+[31m-//[m
+[31m-[m

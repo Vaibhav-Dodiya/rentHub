@@ -4,6 +4,7 @@ import com.example.rentHUB.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 import com.example.rentHUB.model.User;
 
 //import org.springframework.web.bind.annotation.RestController;
@@ -24,13 +25,18 @@ public class UserController {
 
     // Get user by email
     @GetMapping("/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-        return userRepository.findByEmail(email);
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user);
     }
 
     // Add user
     @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User saved = userRepository.save(user);
+        return ResponseEntity.status(201).body(saved);
     }
 }

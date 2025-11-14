@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Document(collection = "properties")
 public class Property {
     @Id
-    private Long id;
+    private String id;
 
     private String title;
     private double price;
@@ -26,11 +26,11 @@ public class Property {
         this.imageUrl = imageUrl;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
