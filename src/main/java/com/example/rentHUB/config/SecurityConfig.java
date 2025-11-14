@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 //package com.example.rentHUB.config;
 //
 //import org.springframework.context.annotation.Bean;
@@ -34,7 +32,6 @@
 
 //}
 
->>>>>>> f9c9e4b85c89a466e6c16a50e8c122d86476610e
 package com.example.rentHUB.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -74,17 +71,9 @@ public class SecurityConfig {
                                 .toList();
                         config.setAllowedOrigins(origins);
                     } else {
-<<<<<<< HEAD
-                        // Wildcard pattern allows Spring to echo back the Origin when credentials are
-                        // enabled
-                        //config.setAllowedOriginPatterns(List.of("*"));
-                        config.setAllowedOriginPatterns(List.of("http://localhost:58364",
-                                "https://rental-hub-lake.vercel.app")); // dev + prod
-
-=======
-
+                        // No explicit app.cors.allowed-origins set; allow any origin pattern so
+                        // Spring can echo the Origin header when credentials are enabled.
                         config.setAllowedOriginPatterns(List.of("*"));
->>>>>>> f9c9e4b85c89a466e6c16a50e8c122d86476610e
                     }
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));

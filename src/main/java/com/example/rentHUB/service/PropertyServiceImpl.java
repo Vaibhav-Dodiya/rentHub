@@ -136,7 +136,7 @@ public class PropertyServiceImpl implements PropertyService {
     private PropertyRepository propertyRepository;
 
     private final String uploadDir = "uploads/";
-    @Value("${app.base-url:http://localhost:8080}")
+   // @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
     @Override
     public Property saveProperty(String title, double price, double oldPrice,
