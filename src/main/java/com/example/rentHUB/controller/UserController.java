@@ -17,13 +17,11 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // Get all users
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Get user by email
     @GetMapping("/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         User user = userRepository.findByEmail(email);
@@ -33,7 +31,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    // Add user
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) {
         User saved = userRepository.save(user);

@@ -33,7 +33,7 @@
 <!--<script>-->
 <!--    const form = document.getElementById('loginForm');-->
 <!--    form.addEventListener('submit', async (event) => {-->
-<!--        event.preventDefault(); // Prevent default form submission-->
+<!--        event.preventDefault();
 
 <!--        const email = document.getElementById('email').value;-->
 <!--        const password = document.getElementById('password').value;-->
@@ -52,8 +52,8 @@
 <!--        if (data.status === 'success') {-->
 <!--            messageEl.style.color = 'green';-->
 <!--            messageEl.textContent = data.message;-->
-<!--            // Redirect to dashboard or home page if needed-->
-<!--            // window.location.href = '/dashboard';-->
+<!--
+<!--
 <!--        } else {-->
 <!--            messageEl.style.color = 'red';-->
 <!--            messageEl.textContent = data.message;-->
@@ -80,153 +80,154 @@
 <!--</html>-->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Login / Forgot Password</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-        }
-        input {
-            margin: 5px 0;
-            padding: 5px;
-        }
-        button {
-            margin: 5px 0;
-            padding: 5px 10px;
-        }
-        #responseMessage {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .form-section {
-            display: none;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      input {
+        margin: 5px 0;
+        padding: 5px;
+      }
+      button {
+        margin: 5px 0;
+        padding: 5px 10px;
+      }
+      #responseMessage {
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      .form-section {
+        display: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <h1>Login</h1>
 
-<h1>Login</h1>
+    <!-- ===== LOGIN FORM ===== -->
+    <form id="loginForm" class="form-section" style="display: block">
+      Email: <input type="email" id="email" required /><br />
+      Password: <input type="password" id="password" required /><br />
+      <button type="submit">Login</button>
+      <br />
+      <a href="#" id="forgotLink">Forgot Password?</a>
+    </form>
 
-<!-- ===== LOGIN FORM ===== -->
-<form id="loginForm" class="form-section" style="display:block;">
-    Email: <input type="email" id="email" required /><br/>
-    Password: <input type="password" id="password" required /><br/>
-    <button type="submit">Login</button>
-    <br/>
-    <a href="#" id="forgotLink">Forgot Password?</a>
-</form>
+    <!-- ===== FORGOT PASSWORD (SEND OTP) ===== -->
+    <form id="forgotForm" class="form-section">
+      <h2>Forgot Password</h2>
+      Enter your registered email:<br />
+      <input type="email" id="forgotEmail" required /><br />
+      <button type="button" id="sendOtpBtn">Send OTP</button>
+      <br />
+      <a href="#" id="backToLogin1">Back to Login</a>
+    </form>
 
-<!-- ===== FORGOT PASSWORD (SEND OTP) ===== -->
-<form id="forgotForm" class="form-section">
-    <h2>Forgot Password</h2>
-    Enter your registered email:<br/>
-    <input type="email" id="forgotEmail" required /><br/>
-    <button type="button" id="sendOtpBtn">Send OTP</button>
-    <br/>
-    <a href="#" id="backToLogin1">Back to Login</a>
-</form>
+    <!-- ===== RESET PASSWORD (VERIFY OTP) ===== -->
+    <form id="resetForm" class="form-section">
+      <h2>Reset Password</h2>
+      Email: <input type="email" id="resetEmail" readonly /><br />
+      OTP: <input type="text" id="otp" required /><br />
+      New Password: <input type="password" id="newPassword" required /><br />
+      <button type="button" id="resetBtn">Reset Password</button>
+      <br />
+      <a href="#" id="backToLogin2">Back to Login</a>
+    </form>
 
-<!-- ===== RESET PASSWORD (VERIFY OTP) ===== -->
-<form id="resetForm" class="form-section">
-    <h2>Reset Password</h2>
-    Email: <input type="email" id="resetEmail" readonly /><br/>
-    OTP: <input type="text" id="otp" required /><br/>
-    New Password: <input type="password" id="newPassword" required /><br/>
-    <button type="button" id="resetBtn">Reset Password</button>
-    <br/>
-    <a href="#" id="backToLogin2">Back to Login</a>
-</form>
+    <p id="responseMessage"></p>
 
-<p id="responseMessage"></p>
+    <script>
+      const loginForm = document.getElementById("loginForm");
+      const forgotForm = document.getElementById("forgotForm");
+      const resetForm = document.getElementById("resetForm");
+      const msg = document.getElementById("responseMessage");
 
-<script>
-    const loginForm = document.getElementById('loginForm');
-    const forgotForm = document.getElementById('forgotForm');
-    const resetForm = document.getElementById('resetForm');
-    const msg = document.getElementById('responseMessage');
+      function showForm(formId) {
+        [loginForm, forgotForm, resetForm].forEach(
+          (f) => (f.style.display = "none"),
+        );
+        formId.style.display = "block";
+        msg.textContent = "";
+      }
 
-    function showForm(formId) {
-        [loginForm, forgotForm, resetForm].forEach(f => f.style.display = 'none');
-        formId.style.display = 'block';
-        msg.textContent = '';
-    }
-
-    // ==================== LOGIN ====================
-    loginForm.addEventListener('submit', async (e) => {
+      loginForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
         });
         const data = await res.json();
-        msg.style.color = data.status === 'success' ? 'green' : 'red';
+        msg.style.color = data.status === "success" ? "green" : "red";
         msg.textContent = data.message;
-    });
+      });
 
-    // ==================== FORGOT PASSWORD ====================
-    document.getElementById('forgotLink').addEventListener('click', (e) => {
+      document.getElementById("forgotLink").addEventListener("click", (e) => {
         e.preventDefault();
         showForm(forgotForm);
-    });
+      });
 
-    document.getElementById('backToLogin1').addEventListener('click', (e) => {
+      document.getElementById("backToLogin1").addEventListener("click", (e) => {
         e.preventDefault();
         showForm(loginForm);
-    });
+      });
 
-    document.getElementById('sendOtpBtn').addEventListener('click', async () => {
-        const email = document.getElementById('forgotEmail').value;
-        if (!email) {
-            msg.style.color = 'red';
-            msg.textContent = 'Please enter email';
+      document
+        .getElementById("sendOtpBtn")
+        .addEventListener("click", async () => {
+          const email = document.getElementById("forgotEmail").value;
+          if (!email) {
+            msg.style.color = "red";
+            msg.textContent = "Please enter email";
             return;
-        }
+          }
 
-        const res = await fetch('/api/auth/forgot-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        msg.style.color = data.status === 'success' ? 'green' : 'red';
-        msg.textContent = data.message;
+          const res = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await res.json();
+          msg.style.color = data.status === "success" ? "green" : "red";
+          msg.textContent = data.message;
 
-        if (data.status === 'success') {
-            document.getElementById('resetEmail').value = email; // prefill reset email
+          if (data.status === "success") {
+            document.getElementById("resetEmail").value = email;
             showForm(resetForm);
-        }
-    });
+          }
+        });
 
-    // ==================== RESET PASSWORD ====================
-    document.getElementById('backToLogin2').addEventListener('click', (e) => {
+      document.getElementById("backToLogin2").addEventListener("click", (e) => {
         e.preventDefault();
         showForm(loginForm);
-    });
+      });
 
-    document.getElementById('resetBtn').addEventListener('click', async () => {
-        const email = document.getElementById('resetEmail').value;
-        const otp = document.getElementById('otp').value;
-        const newPassword = document.getElementById('newPassword').value;
+      document
+        .getElementById("resetBtn")
+        .addEventListener("click", async () => {
+          const email = document.getElementById("resetEmail").value;
+          const otp = document.getElementById("otp").value;
+          const newPassword = document.getElementById("newPassword").value;
 
-        const res = await fetch('/api/auth/reset-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, otp, newPassword })
-        });
-        const data = await res.json();
-        msg.style.color = data.status === 'success' ? 'green' : 'red';
-        msg.textContent = data.message;
+          const res = await fetch("/api/auth/reset-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, otp, newPassword }),
+          });
+          const data = await res.json();
+          msg.style.color = data.status === "success" ? "green" : "red";
+          msg.textContent = data.message;
 
-        if (data.status === 'success') {
+          if (data.status === "success") {
             showForm(loginForm);
-        }
-    });
-</script>
-
-</body>
+          }
+        });
+    </script>
+  </body>
 </html>
