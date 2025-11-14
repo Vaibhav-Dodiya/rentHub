@@ -81,13 +81,26 @@ public class SecurityConfig {
                     config.setAllowCredentials(true);
                     return config;
                 }))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(
-                                "/", "/auth/**", "/register", "/login",
-                                "/public/**", "/static/**", "/health",
-                                "/api/users/**","/auth/**")
-                        .permitAll()
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(
+                "/",
+                "/auth/**",
+                "/register",
+                "/login",
+                "/public/**",
+                "/health",
+                "/api/users/**",
+                // Allow static resources so templates can render (css/js/images/webjars)
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/webjars/**",
+                "/favicon.ico",
+                "/**/*.css",
+                "/**/*.js",
+                "/**/*.png")
+            .permitAll()
                         .anyRequest().authenticated())
                 //.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
