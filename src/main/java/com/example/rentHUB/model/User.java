@@ -1,35 +1,29 @@
 package com.example.rentHUB.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.constraints.Email;
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "users")
+@Document(collection = "users")  // MongoDB collection name
 public class User {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;  // MongoDB uses string ObjectId
+
     private String username;
     private String password;
     private String role;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     @Email
-    @Column(unique = true, nullable = false)
     private String email;
 
-    public Long getId() {
+    // ------- GETTERS & SETTERS ---------
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -57,4 +51,11 @@ public class User {
         this.role = role;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
