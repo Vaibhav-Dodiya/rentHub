@@ -90,8 +90,8 @@ public class SecurityConfig {
                 "/login",
                 "/public/**",
                 "/health",
-                "/api/users/**",
-                // Allow static resources so templates can render (css/js/images/webjars)
+                "/api/users/**", "/api/properties/**",
+                    // Allow static resources so templates can render (css/js/images/webjars)
                 "/css/**",
                 "/js/**",
                 "/images/**",
