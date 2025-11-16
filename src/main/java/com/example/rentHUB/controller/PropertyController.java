@@ -34,7 +34,29 @@ public class PropertyController {
 public ResponseEntity<Property> uploadJson(@RequestBody PropertyRequest req) {
 
     // Decode Base64 image
-    byte[] imageBytes = Base64.getDecoder().decode(req.getImageBase64());
+    String b64 = req.getImageBase64();
+    if (b64 == null || b64.isBlank()) {
+        return ResponseEntity.badRequest().build();
+    }
+    // strip data URI prefix if present: data:<mediatype>;base64,XXXXX
+    int comma = b64.indexOf(',');
+    if (comma > -1) {
+        b64 = b64.substring(comma + 1);
+    }
+    // remove whitespace/newlines
+    b64 = b64.replaceAll("\\s+","");
+
+    byte[] imageBytes;
+    try {
+        imageBytes = Base64.getDecoder().decode(b64);
+    } catch (IllegalArgumentException ex) {
+        // try URL-safe decoder as a fallback (accepts '-' and '_' instead of '+' and '/')
+        try {
+            imageBytes = Base64.getUrlDecoder().decode(b64);
+        } catch (IllegalArgumentException ex2) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     Property saved = propertyService.savePropertyFromJson(
             req.getTitle(),
