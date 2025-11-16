@@ -20,9 +20,32 @@ public class PropertyServiceImpl implements PropertyService {
     private PropertyRepository propertyRepository;
 
     private final String uploadDir = "uploads/";
-   // @Value("${app.base-url:http://localhost:8080}")
-    //private String baseUrl;
-    //@Override
+    
+
+    @Override
+    public Property saveProperty(String title, double price, double oldPrice,
+                                 String deliveryInfo, MultipartFile image) {
+        try {
+            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
+            Path filePath = Paths.get(uploadDir, fileName);
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, image.getBytes());
+
+            Property property = new Property();
+            property.setTitle(title);
+            property.setPrice(price);
+            property.setOldPrice(oldPrice);
+            property.setDiscount("New");
+            property.setDeliveryInfo(deliveryInfo);
+            property.setImageUrl("/" + uploadDir + fileName);
+
+            return propertyRepository.save(property);
+        } catch (IOException e) {
+            throw new RuntimeException("Error saving property", e);
+        }
+    }
+
+    @Override
     public Property savePropertyFromJson(String title, double price, double oldPrice,
                                          String deliveryInfo, String discount, String uploadedBy,
                                          byte[] imageBytes) {
@@ -31,6 +54,7 @@ public class PropertyServiceImpl implements PropertyService {
             // SAVE IMAGE LOCALLY
             String fileName = System.currentTimeMillis() + ".jpg";
             Path path = Paths.get("uploads/" + fileName);
+            Files.createDirectories(path.getParent());
             Files.write(path, imageBytes);
 
             // Create Property object
@@ -49,28 +73,6 @@ public class PropertyServiceImpl implements PropertyService {
             throw new RuntimeException("Failed to save image", e);
         }
     }
-
-//    public Property saveProperty(String title, double price, double oldPrice,
-//                                 String deliveryInfo, MultipartFile image) {
-//        try {
-//            String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-//            Path filePath = Paths.get(uploadDir, fileName);
-//            Files.createDirectories(filePath.getParent());
-//            Files.write(filePath, image.getBytes());
-//
-//            Property property = new Property();
-//            property.setTitle(title);
-//            property.setPrice(price);
-//            property.setOldPrice(oldPrice);
-//            property.setDiscount("New");
-//            property.setDeliveryInfo(deliveryInfo);
-//            property.setImageUrl("/" + uploadDir + fileName);
-//
-//            return propertyRepository.save(property);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error saving property", e);
-//        }
-//    }
 
     @Override
     public List<Property> getAllProperties() {
