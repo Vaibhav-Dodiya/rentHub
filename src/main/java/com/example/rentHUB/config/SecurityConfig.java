@@ -90,16 +90,16 @@ public class SecurityConfig {
                 "/login",
                 "/public/**",
                 "/health",
-                "/api/users/**", "/api/properties/**",
+                    "/api/properties/upload",
+                    "/api/users/**",
+                    "/api/properties/**",
                     // Allow static resources so templates can render (css/js/images/webjars)
                 "/css/**",
                 "/js/**",
                 "/images/**",
                 "/webjars/**",
-                "/favicon.ico",
-                "/**/*.css",
-                "/**/*.js",
-                "/**/*.png")
+                "/favicon.ico"
+                )
             .permitAll()
                         .anyRequest().authenticated())
                 //.csrf(AbstractHttpConfigurer::disable)
