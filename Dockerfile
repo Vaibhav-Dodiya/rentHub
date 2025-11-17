@@ -19,7 +19,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Use a smaller runtime image for final app
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080

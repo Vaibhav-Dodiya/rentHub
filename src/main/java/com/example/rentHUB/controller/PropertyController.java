@@ -71,7 +71,6 @@ public ResponseEntity<Property> uploadJson(@RequestBody PropertyRequest req) {
     return ResponseEntity.ok(saved);
 }
 
-
     @GetMapping
     public ResponseEntity<List<Property>> getAll() {
         return ResponseEntity.ok(propertyService.getAllProperties());
