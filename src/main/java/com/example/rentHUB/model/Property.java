@@ -3,6 +3,7 @@ package com.example.rentHUB.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "properties")
 public class Property {
@@ -14,16 +15,28 @@ public class Property {
     private double oldPrice;
     private String discount;
     private String deliveryInfo;
-    private String imageUrl;
+    private List<String> imageUrls;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    private String location;
+    //private List<String> imageUrls;
+
     private String uploadedBy;
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getImageUrl() {
+        return imageUrls;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUrls(List<String> imageUrl) {
+        this.imageUrls = imageUrls;
     }
 
     public String getId() {
@@ -88,6 +101,9 @@ public class Property {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setImageUrl(String s) {
     }
 
 //    private String imageUrl;
