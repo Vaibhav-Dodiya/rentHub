@@ -46,6 +46,7 @@ public ResponseEntity<?> uploadProperty(
         @RequestParam("title") String title,
         @RequestParam("location") String location,
         @RequestParam("price") int price,
+        @RequestParam(value = "category", defaultValue = "PROPERTY") String category,
         @RequestParam("images") List<MultipartFile> images) {
 
     try {
@@ -61,6 +62,7 @@ public ResponseEntity<?> uploadProperty(
         property.setTitle(title);
         property.setLocation(location);
         property.setPrice(price);
+        property.setCategory(category.toUpperCase());
         property.setImageUrls(urls);
 
         propertyRepository.save(property);
@@ -75,6 +77,12 @@ public ResponseEntity<?> uploadProperty(
     @GetMapping
     public ResponseEntity<List<Property>> getAll() {
         return ResponseEntity.ok(propertyService.getAllProperties());
+    }
+
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<Property>> getByCategory(@PathVariable String category) {
+        List<Property> properties = propertyRepository.findByCategory(category.toUpperCase());
+        return ResponseEntity.ok(properties);
     }
 
     @DeleteMapping("/{id}")

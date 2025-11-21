@@ -11,6 +11,7 @@ public class Property {
     private String id;
 
     private String title;
+    private String category; // PROPERTY, ELECTRONICS, FURNITURE
     private double price;
     private double oldPrice;
     private String discount;
@@ -53,6 +54,14 @@ public class Property {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public double getPrice() {
