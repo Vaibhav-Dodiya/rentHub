@@ -1,4 +1,4 @@
-package com.example.rentHUB.config;
+package com.example.rentHub.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;

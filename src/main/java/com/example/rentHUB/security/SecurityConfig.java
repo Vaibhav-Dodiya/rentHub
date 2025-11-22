@@ -12,13 +12,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
-                .formLogin(httpForm ->{
-                  httpForm
-                          .loginPage("/login").permitAll();
-                })
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
                 .authorizeHttpRequests(registry->{
-                    registry.requestMatchers("/req/signup").permitAll();
+                    registry.requestMatchers("/api/**").permitAll();
+                    registry.requestMatchers("/req/**").permitAll();
+                    registry.requestMatchers("/health").permitAll();
                     registry.anyRequest().authenticated();
+                })
+                .formLogin(httpForm ->{
+                  httpForm.loginPage("/login").permitAll();
                 })
                 .build();
     }

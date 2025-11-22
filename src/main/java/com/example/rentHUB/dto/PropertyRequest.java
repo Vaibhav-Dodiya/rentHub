@@ -1,4 +1,4 @@
-package com.example.rentHUB.dto;
+package com.example.rentHub.dto;
 
 public class PropertyRequest {
     private String title;

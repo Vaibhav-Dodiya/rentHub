@@ -1,7 +1,7 @@
-package com.example.rentHUB.service;
+package com.example.rentHub.service;
 
-import com.example.rentHUB.model.Property;
-import com.example.rentHUB.repository.PropertyRepository;
+import com.example.rentHub.model.Property;
+import com.example.rentHub.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -1,6 +1,6 @@
-package com.example.rentHUB.repository;
+package com.example.rentHub.repository;
 
-import com.example.rentHUB.model.User;
+import com.example.rentHub.model.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

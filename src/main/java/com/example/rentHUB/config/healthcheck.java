@@ -1,4 +1,4 @@
-package com.example.rentHUB.config;
+package com.example.rentHub.config;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

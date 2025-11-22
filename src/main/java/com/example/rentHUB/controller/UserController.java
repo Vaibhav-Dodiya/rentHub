@@ -1,11 +1,11 @@
-package com.example.rentHUB.controller;
+package com.example.rentHub.controller;
 
-import com.example.rentHUB.repository.UserRepository;
+import com.example.rentHub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import com.example.rentHUB.model.User;
+import com.example.rentHub.model.User;
 
 //import org.springframework.web.bind.annotation.RestController;
 

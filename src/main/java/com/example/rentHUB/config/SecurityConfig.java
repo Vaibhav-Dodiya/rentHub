@@ -1,4 +1,4 @@
-//package com.example.rentHUB.config;
+//package com.example.rentHub.config;
 //
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@
 //import org.springframework.security.crypto.password.PasswordEncoder;
 //import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 //import org.springframework.security.web.SecurityFilterChain;
-//import com.example.rentHUB.service.CustomUserDetails;
+//import com.example.rentHub.service.CustomUserDetails;
 //import org.springframework.web.cors.CorsConfiguration;
 //
 //import java.util.List;
@@ -32,7 +32,7 @@
 
 //}
 
-package com.example.rentHUB.config;
+package com.example.rentHub.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

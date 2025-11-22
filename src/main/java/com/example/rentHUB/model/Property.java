@@ -1,4 +1,4 @@
-package com.example.rentHUB.model;
+package com.example.rentHub.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -27,16 +27,14 @@ public class Property {
     }
 
     private String location;
-    //private List<String> imageUrls;
-
     private String uploadedBy;
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public List<String> getImageUrl() {
+    public List<String> getImageUrls() {
         return imageUrls;
     }
 
-    public void setImageUrls(List<String> imageUrl) {
+    public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
     }
 
@@ -111,12 +109,4 @@ public class Property {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
-    public void setImageUrl(String s) {
-    }
-
-//    private String imageUrl;
-//    private String uploadedBy;
-//    private LocalDateTime createdAt = LocalDateTime.now();
-
 }

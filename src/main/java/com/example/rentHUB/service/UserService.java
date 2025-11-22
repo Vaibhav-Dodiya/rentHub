@@ -1,10 +1,10 @@
-package com.example.rentHUB.service;
+package com.example.rentHub.service;
 
-import com.example.rentHUB.model.User;
+import com.example.rentHub.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.example.rentHUB.repository.UserRepository;
+import com.example.rentHub.repository.UserRepository;
 
 @Service
 public class UserService {

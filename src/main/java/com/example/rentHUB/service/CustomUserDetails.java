@@ -1,11 +1,11 @@
-package com.example.rentHUB.service;
+package com.example.rentHub.service;
 
-import com.example.rentHUB.model.User;
+import com.example.rentHub.model.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import com.example.rentHUB.repository.UserRepository;
+import com.example.rentHub.repository.UserRepository;
 
 @Service
 public class CustomUserDetails implements UserDetailsService {

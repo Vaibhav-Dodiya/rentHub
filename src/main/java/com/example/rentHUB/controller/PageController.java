@@ -1,4 +1,4 @@
-package com.example.rentHUB.controller;
+package com.example.rentHub.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

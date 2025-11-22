@@ -1,4 +1,4 @@
-package com.example.rentHUB.model;
+package com.example.rentHub.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

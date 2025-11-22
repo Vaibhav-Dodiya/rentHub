@@ -1,6 +1,6 @@
-package com.example.rentHUB.service;
+package com.example.rentHub.service;
 
-import com.example.rentHUB.model.Property;
+import com.example.rentHub.model.Property;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

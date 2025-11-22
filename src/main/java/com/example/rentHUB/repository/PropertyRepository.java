@@ -1,5 +1,5 @@
-package com.example.rentHUB.repository;
-import com.example.rentHUB.model.Property;
+package com.example.rentHub.repository;
+import com.example.rentHub.model.Property;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 

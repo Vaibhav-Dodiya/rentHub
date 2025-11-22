@@ -1,4 +1,4 @@
-package com.example.rentHUB;
+package com.example.rentHub;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

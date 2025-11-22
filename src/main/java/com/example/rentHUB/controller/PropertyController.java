@@ -1,11 +1,11 @@
-package com.example.rentHUB.controller;
+package com.example.rentHub.controller;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.rentHUB.model.Property;
-import com.example.rentHUB.repository.PropertyRepository;
-import com.example.rentHUB.service.PropertyService;
-import com.example.rentHUB.dto.PropertyRequest;
+import com.example.rentHub.model.Property;
+import com.example.rentHub.repository.PropertyRepository;
+import com.example.rentHub.service.PropertyService;
+import com.example.rentHub.dto.PropertyRequest;
 import java.util.Base64;
 
 import java.util.List;
