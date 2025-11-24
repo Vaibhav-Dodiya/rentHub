@@ -37,7 +37,7 @@ public class PropertyServiceImpl implements PropertyService {
             property.setOldPrice(oldPrice);
             property.setDiscount("New");
             property.setDeliveryInfo(deliveryInfo);
-            property.setImageUrl("/" + uploadDir + fileName);
+            property.setImageUrls(List.of("/" + uploadDir + fileName));
 
             return propertyRepository.save(property);
         } catch (IOException e) {
@@ -65,7 +65,7 @@ public class PropertyServiceImpl implements PropertyService {
             property.setDeliveryInfo(deliveryInfo);
             property.setDiscount(discount);
             property.setUploadedBy(uploadedBy);
-            property.setImageUrl("/uploads/" + fileName);
+            property.setImageUrls(List.of("/uploads/" + fileName));
             property.setCreatedAt(LocalDateTime.now());
 
             return propertyRepository.save(property);
