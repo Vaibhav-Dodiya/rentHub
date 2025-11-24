@@ -16,7 +16,9 @@ public class AuthController {
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterRequest request) {
         try {
-            userService.registerUser(request.getUsername(), request.getEmail(), request.getPassword());
+            // Default to CUSTOMER if role not specified
+            String role = request.getRole() != null ? request.getRole() : "CUSTOMER";
+            userService.registerUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
             return new Response("success", "User registered successfully");
         } catch (Exception e) {
             return new Response("error", e.getMessage());
@@ -24,14 +26,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Response> loginUser(@RequestBody LoginRequest request) {
-        boolean success = userService.loginUser(request.getEmail(), request.getPassword());
-        if (success) {
-            return ResponseEntity.ok(new Response("success", "Login successful"));
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
+        User user = userService.authenticateUser(request.getEmail(), request.getPassword());
+        if (user != null) {
+            LoginResponse response = new LoginResponse("success", "Login successful", 
+                user.getId(), user.getUsername(), user.getEmail(), user.getRole());
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new Response("error", "Invalid email or password"));
         }
+    }
+
+    @GetMapping("/roles")
+    public ResponseEntity<?> getRoles() {
+        return ResponseEntity.ok(new String[]{"CUSTOMER", "OWNER", "ADMIN"});
     }
 
     //
@@ -40,6 +49,7 @@ public class AuthController {
         private String username;
         private String email;
         private String password;
+        private String role;
 
         public String getUsername() {
             return username;
@@ -63,6 +73,14 @@ public class AuthController {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
     }
 
@@ -144,6 +162,37 @@ public class AuthController {
 
         public String getMessage() {
             return message;
+        }
+    }
+
+    static class LoginResponse extends Response {
+        private String userId;
+        private String username;
+        private String email;
+        private String role;
+
+        public LoginResponse(String status, String message, String userId, String username, String email, String role) {
+            super(status, message);
+            this.userId = userId;
+            this.username = username;
+            this.email = email;
+            this.role = role;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getRole() {
+            return role;
         }
     }
 }

@@ -13,16 +13,24 @@ public class UserService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void registerUser(String username, String email, String password) {
+    public void registerUser(String username, String email, String password, String role) {
         if (userRepository.findByEmail(email) != null) {
             throw new RuntimeException("Email already registered");
+        }
+
+        // Validate role
+        if (role == null || role.isEmpty()) {
+            role = "CUSTOMER";
+        }
+        if (!role.equals("CUSTOMER") && !role.equals("OWNER") && !role.equals("ADMIN")) {
+            throw new RuntimeException("Invalid role. Must be CUSTOMER, OWNER, or ADMIN");
         }
 
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
-        user.setRole("USER");
+        user.setRole(role);
         userRepository.save(user);
     }
 
@@ -32,5 +40,13 @@ public class UserService {
             return false;
         }
         return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    public User authenticateUser(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
     }
 }
