@@ -45,13 +45,14 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Response> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         try {
             String otp = userService.generatePasswordResetOTP(request.getEmail());
             if (otp != null) {
                 // In production, send OTP via email
                 // For now, return it in response (NOT RECOMMENDED for production)
-                return ResponseEntity.ok(new Response("success", "OTP sent to email: " + otp));
+                OtpResponse response = new OtpResponse("success", "OTP generated successfully", otp);
+                return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new Response("error", "Email not found"));
@@ -232,6 +233,19 @@ public class AuthController {
 
         public String getRole() {
             return role;
+        }
+    }
+
+    static class OtpResponse extends Response {
+        private String otp;
+
+        public OtpResponse(String status, String message, String otp) {
+            super(status, message);
+            this.otp = otp;
+        }
+
+        public String getOtp() {
+            return otp;
         }
     }
 }
