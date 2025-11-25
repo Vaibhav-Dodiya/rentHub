@@ -63,7 +63,9 @@ public class UserService {
     }
 
     public String generatePasswordResetOTP(String email) {
+        System.out.println("Looking for user with email: " + email);
         User user = userRepository.findByEmail(email);
+        System.out.println("User found: " + (user != null ? user.getEmail() : "null"));
         if (user == null) {
             return null;
         }
