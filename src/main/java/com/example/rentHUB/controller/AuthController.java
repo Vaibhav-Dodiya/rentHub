@@ -49,10 +49,8 @@ public class AuthController {
         try {
             String otp = userService.generatePasswordResetOTP(request.getEmail());
             if (otp != null) {
-                // In production, send OTP via email
-                // For now, return it in response (NOT RECOMMENDED for production)
-                OtpResponse response = new OtpResponse("success", "OTP generated successfully", otp);
-                return ResponseEntity.ok(response);
+                // OTP sent via email
+                return ResponseEntity.ok(new Response("success", "OTP has been sent to your email"));
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(new Response("error", "Email not found"));

@@ -8,16 +8,22 @@ import com.example.rentHub.repository.UserRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     // Simple in-memory OTP storage (use Redis or database in production)
     private Map<String, String> otpStorage = new HashMap<>();
+    private Map<String, LocalDateTime> otpExpiryStorage = new HashMap<>();
+    private static final int OTP_VALIDITY_MINUTES = 10;
 
     public void registerUser(String username, String email, String password, String role) {
         if (userRepository.findByEmail(email) != null) {
@@ -65,17 +71,33 @@ public class UserService {
         // Generate 6-digit OTP
         String otp = String.format("%06d", new Random().nextInt(999999));
         otpStorage.put(email, otp);
+        otpExpiryStorage.put(email, LocalDateTime.now().plusMinutes(OTP_VALIDITY_MINUTES));
         
-        // TODO: Send OTP via email service
-        // For now, we return it (NOT RECOMMENDED for production)
+        // Send OTP via email
+        try {
+            emailService.sendOtpEmail(email, otp);
+        } catch (Exception e) {
+            // If email fails, still return OTP for testing/debugging
+            System.err.println("Failed to send email: " + e.getMessage());
+            // In production, you might want to throw an exception here
+        }
         
         return otp;
     }
 
     public boolean resetPassword(String email, String otp, String newPassword) {
         String storedOtp = otpStorage.get(email);
+        LocalDateTime expiryTime = otpExpiryStorage.get(email);
         
+        // Check if OTP exists
         if (storedOtp == null || !storedOtp.equals(otp)) {
+            return false;
+        }
+        
+        // Check if OTP has expired
+        if (expiryTime == null || LocalDateTime.now().isAfter(expiryTime)) {
+            otpStorage.remove(email);
+            otpExpiryStorage.remove(email);
             return false;
         }
         
@@ -90,6 +112,7 @@ public class UserService {
         
         // Remove used OTP
         otpStorage.remove(email);
+        otpExpiryStorage.remove(email);
         
         return true;
     }
