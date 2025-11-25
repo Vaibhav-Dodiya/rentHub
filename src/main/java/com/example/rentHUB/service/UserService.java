@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.rentHub.repository.UserRepository;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @Service
 public class UserService {
@@ -12,6 +15,9 @@ public class UserService {
     private UserRepository userRepository;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    
+    // Simple in-memory OTP storage (use Redis or database in production)
+    private Map<String, String> otpStorage = new HashMap<>();
 
     public void registerUser(String username, String email, String password, String role) {
         if (userRepository.findByEmail(email) != null) {
@@ -48,5 +54,43 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    public String generatePasswordResetOTP(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return null;
+        }
+        
+        // Generate 6-digit OTP
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        otpStorage.put(email, otp);
+        
+        // TODO: Send OTP via email service
+        // For now, we return it (NOT RECOMMENDED for production)
+        
+        return otp;
+    }
+
+    public boolean resetPassword(String email, String otp, String newPassword) {
+        String storedOtp = otpStorage.get(email);
+        
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            return false;
+        }
+        
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        
+        // Remove used OTP
+        otpStorage.remove(email);
+        
+        return true;
     }
 }

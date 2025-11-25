@@ -44,6 +44,44 @@ public class AuthController {
         return ResponseEntity.ok(new String[]{"CUSTOMER", "OWNER", "ADMIN"});
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Response> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        try {
+            String otp = userService.generatePasswordResetOTP(request.getEmail());
+            if (otp != null) {
+                // In production, send OTP via email
+                // For now, return it in response (NOT RECOMMENDED for production)
+                return ResponseEntity.ok(new Response("success", "OTP sent to email: " + otp));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new Response("error", "Email not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Response> resetPassword(@RequestBody ResetPasswordRequest request) {
+        try {
+            boolean success = userService.resetPassword(
+                request.getEmail(), 
+                request.getOtp(), 
+                request.getNewPassword()
+            );
+            if (success) {
+                return ResponseEntity.ok(new Response("success", "Password reset successfully"));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new Response("error", "Invalid OTP or email"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("error", e.getMessage()));
+        }
+    }
+
     //
 
     static class RegisterRequest {
