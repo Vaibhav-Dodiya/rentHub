@@ -16,7 +16,12 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+# Retry Maven build with extended timeout and offline-tolerant mode
+RUN mvn clean package -DskipTests \
+    -Dmaven.wagon.http.retryHandler.count=3 \
+    -Dmaven.wagon.http.pool=false \
+    -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
+    || mvn clean package -DskipTests
 
 # Use a smaller runtime image for final app
 FROM eclipse-temurin:17-jre-alpine
