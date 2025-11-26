@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    @Value("${app.email.from}")
+    @Value("${app.email.from:noreply@renthub.com}")
     private String fromEmail;
 
     public void sendOtpEmail(String toEmail, String otp) {

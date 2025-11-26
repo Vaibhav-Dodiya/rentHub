@@ -15,7 +15,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+    @Autowired(required = false)
     private EmailService emailService;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -77,11 +77,16 @@ public class UserService {
         
         // Send OTP via email
         try {
-            emailService.sendOtpEmail(email, otp);
+            if (emailService != null) {
+                emailService.sendOtpEmail(email, otp);
+                System.out.println("OTP email sent successfully to: " + email);
+            } else {
+                System.err.println("Email service not configured - OTP: " + otp);
+            }
         } catch (Exception e) {
             // If email fails, still return OTP for testing/debugging
             System.err.println("Failed to send email: " + e.getMessage());
-            // In production, you might want to throw an exception here
+            System.err.println("OTP for " + email + ": " + otp);
         }
         
         return otp;
