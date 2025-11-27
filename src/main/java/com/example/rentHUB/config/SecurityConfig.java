@@ -90,10 +90,8 @@ public class SecurityConfig {
                 "/login",
                 "/public/**",
                 "/health",
-                    "/api/properties/upload",
-                    "/api/users/**",
-                    "/api/properties/**",
-                    // Allow static resources so templates can render (css/js/images/webjars)
+                "/api/**",
+                // Allow static resources so templates can render (css/js/images/webjars)
                 "/css/**",
                 "/js/**",
                 "/images/**",
@@ -101,7 +99,7 @@ public class SecurityConfig {
                 "/favicon.ico"
                 )
             .permitAll()
-                        .anyRequest().authenticated())
+            .anyRequest().authenticated())
                 //.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)

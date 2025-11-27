@@ -12,11 +12,14 @@ public class Property {
 
     private String title;
     private String category; // PROPERTY, ELECTRONICS, FURNITURE
-    private double price;
-    private double oldPrice;
+    private int price;
+    private int oldPrice;
     private String discount;
     private String deliveryInfo;
     private List<String> imageUrls;
+    private String location;
+    private String uploadedBy;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getLocation() {
         return location;
@@ -25,10 +28,6 @@ public class Property {
     public void setLocation(String location) {
         this.location = location;
     }
-
-    private String location;
-    private String uploadedBy;
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     public List<String> getImageUrls() {
         return imageUrls;
@@ -62,19 +61,19 @@ public class Property {
         this.category = category;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public double getOldPrice() {
+    public int getOldPrice() {
         return oldPrice;
     }
 
-    public void setOldPrice(double oldPrice) {
+    public void setOldPrice(int oldPrice) {
         this.oldPrice = oldPrice;
     }
 

@@ -50,12 +50,28 @@ public ResponseEntity<?> uploadProperty(
         @RequestParam("images") List<MultipartFile> images) {
 
     try {
+        if (images == null || images.isEmpty()) {
+            return ResponseEntity.status(400).body(
+                Map.of("status", "error", "message", "At least one image is required")
+            );
+        }
+
         List<String> urls = new ArrayList<>();
 
         for (MultipartFile image : images) {
-            Map uploadResult = cloudinary.uploader().upload(image.getBytes(),
+            if (image.isEmpty()) {
+                continue;
+            }
+            @SuppressWarnings("unchecked")
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(image.getBytes(),
                     ObjectUtils.asMap("folder", "renthub/properties"));
             urls.add((String) uploadResult.get("secure_url"));
+        }
+
+        if (urls.isEmpty()) {
+            return ResponseEntity.status(400).body(
+                Map.of("status", "error", "message", "Failed to upload images")
+            );
         }
 
         Property property = new Property();
@@ -65,12 +81,15 @@ public ResponseEntity<?> uploadProperty(
         property.setCategory(category.toUpperCase());
         property.setImageUrls(urls);
 
-        propertyRepository.save(property);
+        Property saved = propertyRepository.save(property);
 
-        return ResponseEntity.ok(property);
+        return ResponseEntity.ok(saved);
 
     } catch (Exception e) {
-        return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(500).body(
+            Map.of("status", "error", "message", "Upload failed: " + e.getMessage())
+        );
     }
 }
 
