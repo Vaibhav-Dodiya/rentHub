@@ -23,7 +23,7 @@ public class PropertyServiceImpl implements PropertyService {
     
 
     @Override
-    public Property saveProperty(String title, double price, double oldPrice,
+    public Property saveProperty(String title, int price, int oldPrice,
                                  String deliveryInfo, MultipartFile image) {
         try {
             String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
@@ -46,7 +46,7 @@ public class PropertyServiceImpl implements PropertyService {
     }
 
     @Override
-    public Property savePropertyFromJson(String title, double price, double oldPrice,
+    public Property savePropertyFromJson(String title, int price, int oldPrice,
                                          String deliveryInfo, String discount, String uploadedBy,
                                          byte[] imageBytes) {
 
