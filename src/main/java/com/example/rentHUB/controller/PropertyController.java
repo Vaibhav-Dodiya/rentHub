@@ -41,8 +41,30 @@ public class PropertyController {
 //        Property saved = propertyService.saveProperty(title, price, oldPrice, deliveryInfo, image);
 //        return ResponseEntity.ok(saved);
 //    }
+// JSON endpoint for testing - accepts image URLs directly
 @PostMapping("/upload")
-public ResponseEntity<?> uploadProperty(
+public ResponseEntity<?> uploadPropertyJson(@RequestBody Property property) {
+    try {
+        if (property.getImageUrls() == null || property.getImageUrls().isEmpty()) {
+            return ResponseEntity.status(400).body(
+                Map.of("status", "error", "message", "At least one image URL is required")
+            );
+        }
+
+        Property saved = propertyRepository.save(property);
+        return ResponseEntity.ok(saved);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500).body(
+            Map.of("status", "error", "message", "Upload failed: " + e.getMessage())
+        );
+    }
+}
+
+// Multipart file upload endpoint
+@PostMapping("/upload-files")
+public ResponseEntity<?> uploadPropertyWithFiles(
         @RequestParam("title") String title,
         @RequestParam("location") String location,
         @RequestParam("price") int price,
