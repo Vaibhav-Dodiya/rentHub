@@ -100,7 +100,7 @@ public class SecurityConfig {
                 )
             .permitAll()
             .anyRequest().authenticated())
-                //.csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)

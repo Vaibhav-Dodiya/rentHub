@@ -3,6 +3,7 @@ package com.example.rentHub.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.validation.constraints.Email;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Document(collection = "users")  // MongoDB collection name
 public class User {
@@ -11,7 +12,10 @@ public class User {
     private String id;  // MongoDB uses string ObjectId
 
     private String username;
+    
+    @JsonIgnore  // Hide password from JSON responses
     private String password;
+    
     private String role;
 
     @Email
