@@ -14,11 +14,23 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    // Admin secret key - change this to your own secret
+    private static final String ADMIN_SECRET_KEY = "RENTHUB_ADMIN_2025";
+
     @PostMapping("/register")
     public Response registerUser(@RequestBody RegisterRequest request) {
         try {
             // Default to CUSTOMER if role not specified
             String role = request.getRole() != null ? request.getRole() : "CUSTOMER";
+            
+            // Validate admin secret key if registering as ADMIN
+            if ("ADMIN".equalsIgnoreCase(role)) {
+                String providedKey = request.getAdminSecretKey();
+                if (providedKey == null || !ADMIN_SECRET_KEY.equals(providedKey)) {
+                    return new Response("error", "Invalid admin secret key. Contact system administrator.");
+                }
+            }
+            
             userService.registerUser(request.getUsername(), request.getEmail(), request.getPassword(), role);
             return new Response("success", "User registered successfully");
         } catch (Exception e) {
@@ -88,6 +100,7 @@ public class AuthController {
         private String email;
         private String password;
         private String role;
+        private String adminSecretKey;
 
         public String getUsername() {
             return username;
@@ -119,6 +132,14 @@ public class AuthController {
 
         public void setRole(String role) {
             this.role = role;
+        }
+
+        public String getAdminSecretKey() {
+            return adminSecretKey;
+        }
+
+        public void setAdminSecretKey(String adminSecretKey) {
+            this.adminSecretKey = adminSecretKey;
         }
     }
 

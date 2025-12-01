@@ -69,6 +69,7 @@ public ResponseEntity<?> uploadPropertyWithFiles(
         @RequestParam("location") String location,
         @RequestParam("price") int price,
         @RequestParam(value = "category", defaultValue = "PROPERTY") String category,
+        @RequestParam(value = "uploadedBy", required = false) String uploadedBy,
         @RequestParam("images") List<MultipartFile> images) {
 
     try {
@@ -102,6 +103,7 @@ public ResponseEntity<?> uploadPropertyWithFiles(
         property.setPrice(price);
         property.setCategory(category.toUpperCase());
         property.setImageUrls(urls);
+        property.setUploadedBy(uploadedBy);
 
         Property saved = propertyRepository.save(property);
 
