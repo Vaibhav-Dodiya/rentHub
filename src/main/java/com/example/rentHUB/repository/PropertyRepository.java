@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface PropertyRepository extends MongoRepository<Property, String> {
     List<Property> findByCategory(String category);
+    List<Property> findByUploadedBy(String uploadedBy);
 }

@@ -128,6 +128,61 @@ public ResponseEntity<?> uploadPropertyWithFiles(
         return ResponseEntity.ok(properties);
     }
 
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<Property>> getByOwner(@PathVariable String ownerId) {
+        List<Property> properties = propertyRepository.findByUploadedBy(ownerId);
+        return ResponseEntity.ok(properties);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProperty(
+            @PathVariable String id,
+            @RequestParam("title") String title,
+            @RequestParam("location") String location,
+            @RequestParam("price") int price,
+            @RequestParam(value = "category", defaultValue = "PROPERTY") String category,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+
+        try {
+            Property existing = propertyRepository.findById(id).orElse(null);
+            if (existing == null) {
+                return ResponseEntity.status(404).body(
+                    Map.of("status", "error", "message", "Property not found")
+                );
+            }
+
+            existing.setTitle(title);
+            existing.setLocation(location);
+            existing.setPrice(price);
+            existing.setCategory(category.toUpperCase());
+
+            // If new images are uploaded, replace old ones
+            if (images != null && !images.isEmpty()) {
+                List<String> urls = new ArrayList<>();
+                for (MultipartFile image : images) {
+                    if (!image.isEmpty()) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> uploadResult = cloudinary.uploader().upload(image.getBytes(),
+                                ObjectUtils.asMap("folder", "renthub/properties"));
+                        urls.add((String) uploadResult.get("secure_url"));
+                    }
+                }
+                if (!urls.isEmpty()) {
+                    existing.setImageUrls(urls);
+                }
+            }
+
+            Property updated = propertyRepository.save(existing);
+            return ResponseEntity.ok(updated);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(
+                Map.of("status", "error", "message", "Update failed: " + e.getMessage())
+            );
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         propertyService.deleteProperty(id);
