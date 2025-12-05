@@ -3,7 +3,9 @@ package com.example.rentHub.controller;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.rentHub.model.Property;
+import com.example.rentHub.model.User;
 import com.example.rentHub.repository.PropertyRepository;
+import com.example.rentHub.repository.UserRepository;
 import com.example.rentHub.service.PropertyService;
 import com.example.rentHub.dto.PropertyRequest;
 import java.util.Base64;
@@ -29,6 +31,9 @@ public class PropertyController {
 
     @Autowired
     private PropertyRepository propertyRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     //    @PostMapping("/upload")
 //    public ResponseEntity<Property> uploadProperty(
@@ -119,18 +124,22 @@ public ResponseEntity<?> uploadPropertyWithFiles(
 
     @GetMapping
     public ResponseEntity<List<Property>> getAll() {
-        return ResponseEntity.ok(propertyService.getAllProperties());
+        List<Property> properties = propertyService.getAllProperties();
+        populateOwnerNames(properties);
+        return ResponseEntity.ok(properties);
     }
 
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Property>> getByCategory(@PathVariable String category) {
         List<Property> properties = propertyRepository.findByCategory(category.toUpperCase());
+        populateOwnerNames(properties);
         return ResponseEntity.ok(properties);
     }
 
     @GetMapping("/owner/{ownerId}")
     public ResponseEntity<List<Property>> getByOwner(@PathVariable String ownerId) {
         List<Property> properties = propertyRepository.findByUploadedBy(ownerId);
+        populateOwnerNames(properties);
         return ResponseEntity.ok(properties);
     }
 
@@ -187,5 +196,21 @@ public ResponseEntity<?> uploadPropertyWithFiles(
     public ResponseEntity<Void> delete(@PathVariable String id) {
         propertyService.deleteProperty(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Helper method to populate owner names for properties
+    private void populateOwnerNames(List<Property> properties) {
+        for (Property property : properties) {
+            if (property.getUploadedBy() != null && !property.getUploadedBy().isEmpty()) {
+                User owner = userRepository.findById(property.getUploadedBy()).orElse(null);
+                if (owner != null) {
+                    property.setOwnerName(owner.getUsername());
+                } else {
+                    property.setOwnerName("Unknown");
+                }
+            } else {
+                property.setOwnerName("Unknown");
+            }
+        }
     }
 }

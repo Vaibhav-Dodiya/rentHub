@@ -19,6 +19,7 @@ public class Property {
     private List<String> imageUrls;
     private String location;
     private String uploadedBy;
+    private String ownerName; // Owner's username
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public String getLocation() {
@@ -99,6 +100,14 @@ public class Property {
 
     public void setUploadedBy(String uploadedBy) {
         this.uploadedBy = uploadedBy;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public LocalDateTime getCreatedAt() {
