@@ -55,7 +55,7 @@ public class RequestController {
             User requester = requesterOpt.get();
 
             // Get owner details
-            Optional<User> ownerOpt = userRepository.findById(property.getUserId());
+            Optional<User> ownerOpt = userRepository.findById(property.getUploadedBy());
             if (!ownerOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "Owner not found"));
@@ -67,7 +67,7 @@ public class RequestController {
             request.setPropertyId(propertyId);
             request.setPropertyTitle(property.getTitle());
             request.setPropertyCategory(property.getCategory());
-            request.setOwnerId(property.getUserId());
+            request.setOwnerId(property.getUploadedBy());
             request.setOwnerName(owner.getUsername());
             request.setRequesterId(requesterId);
             request.setRequesterName(requester.getUsername());
