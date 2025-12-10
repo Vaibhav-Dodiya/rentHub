@@ -19,6 +19,8 @@ public class Request {
     private String status; // PENDING, ACCEPTED, REJECTED
     private LocalDateTime requestDate;
     private String message;
+    private String ownerResponse; // Owner's message when accepting
+    private LocalDateTime responseDate; // When owner responded
 
     public Request() {
         this.requestDate = LocalDateTime.now();
@@ -120,5 +122,21 @@ public class Request {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getOwnerResponse() {
+        return ownerResponse;
+    }
+
+    public void setOwnerResponse(String ownerResponse) {
+        this.ownerResponse = ownerResponse;
+    }
+
+    public LocalDateTime getResponseDate() {
+        return responseDate;
+    }
+
+    public void setResponseDate(LocalDateTime responseDate) {
+        this.responseDate = responseDate;
     }
 }

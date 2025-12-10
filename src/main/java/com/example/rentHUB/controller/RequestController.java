@@ -131,6 +131,14 @@ public class RequestController {
 
             Request request = requestOpt.get();
             request.setStatus(statusData.get("status"));
+            
+            // Add owner response if provided
+            String ownerResponse = statusData.get("ownerResponse");
+            if (ownerResponse != null && !ownerResponse.isEmpty()) {
+                request.setOwnerResponse(ownerResponse);
+                request.setResponseDate(LocalDateTime.now());
+            }
+            
             requestRepository.save(request);
 
             return ResponseEntity.ok(Map.of("message", "Request status updated", "request", request));
