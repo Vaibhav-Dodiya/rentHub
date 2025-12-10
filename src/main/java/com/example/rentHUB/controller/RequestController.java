@@ -38,6 +38,12 @@ public class RequestController {
             String requesterId = requestData.get("requesterId");
             String message = requestData.get("message");
 
+            // Check if request already exists
+            if (requestRepository.existsByPropertyIdAndRequesterId(propertyId, requesterId)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("message", "You have already requested this item"));
+            }
+
             // Get property details
             Optional<Property> propertyOpt = propertyRepository.findById(propertyId);
             if (!propertyOpt.isPresent()) {
@@ -147,6 +153,20 @@ public class RequestController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Error deleting request: " + e.getMessage()));
+        }
+    }
+
+    // Check if a request exists
+    @GetMapping("/check/{propertyId}/{requesterId}")
+    public ResponseEntity<?> checkRequestExists(
+            @PathVariable String propertyId,
+            @PathVariable String requesterId) {
+        try {
+            boolean exists = requestRepository.existsByPropertyIdAndRequesterId(propertyId, requesterId);
+            return ResponseEntity.ok(Map.of("exists", exists));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error checking request: " + e.getMessage()));
         }
     }
 }

@@ -10,4 +10,5 @@ public interface RequestRepository extends MongoRepository<Request, String> {
     List<Request> findByOwnerId(String ownerId);
     List<Request> findByRequesterId(String requesterId);
     List<Request> findByPropertyId(String propertyId);
+    boolean existsByPropertyIdAndRequesterId(String propertyId, String requesterId);
 }
